@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" data-th="light">
+<head>
+<meta charset="utf-8">
+<title>Pulse – Fitness Tracker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap">
+<style>
+:root{--bg:#F9FAFB;--card:#fff;--tx:#111827;--mut:#4B5563;--bd:#E5E7EB;--pu:#7C3AED;--co:#F97316;--cy:#06B6D4;--pe:#FED7AA;
+--g1:linear-gradient(135deg,#7C3AED,#EA580C);--g2:linear-gradient(135deg,#7C3AED,#0E7490);--g3:linear-gradient(135deg,#EA580C,#F97316);
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root:not([data-theme="light"])[data-th="dark"],:root[data-th="dark"]{--bg:#111827;--card:#1F2937;--tx:#F9FAFB;--mut:#9CA3AF;--bd:#374151}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.45 'Bricolage Grotesque',system-ui,sans-serif;padding-bottom:84px}
+main{max-width:760px;margin:0 auto;padding:16px}
+h2{font-size:20px;margin:22px 0 10px}h3{margin:0 0 8px;font-size:16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:16px;margin-bottom:14px}
+.hd{background:var(--g1);color:#fff;border:0;border-radius:24px}
+.hd h1{margin:0;font-size:28px;font-weight:800}.hd p{margin:2px 0 0;opacity:.95}
+.mut{color:var(--mut);font-size:14px}
+.row{display:flex;gap:12px;align-items:center}.sp{justify-content:space-between}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+button{font:inherit;cursor:pointer;min-height:44px;border-radius:14px;border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:8px 14px}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--cy);outline-offset:2px}
+.pri{background:var(--g1);color:#fff;border:0;font-weight:800;font-size:17px;width:100%;min-height:54px;box-shadow:0 6px 18px rgba(124,58,237,.35)}
+.dng{background:#B91C1C;color:#fff;border:0}.sm{min-height:36px;padding:4px 10px;font-size:14px}
+.q{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.q button{display:flex;flex-direction:column;align-items:center;gap:2px;font-weight:600}.q span{font-size:26px}
+.ringw{position:relative;display:grid;place-items:center}.ringw .in{position:absolute;text-align:center;line-height:1.1}
+.ring{transform:rotate(-90deg)}.ring circle{fill:none;stroke-linecap:round}.ring .bg{stroke:var(--bd)}
+.ring .fg{stroke-dasharray:var(--c);stroke-dashoffset:var(--o);animation:rg 1.1s ease-out}
+@keyframes rg{from{stroke-dashoffset:var(--c)}}
+.tile{text-align:center}.tile b{display:block;font-size:18px}
+.bar{height:12px;border-radius:9px;background:var(--bd);overflow:hidden}.bar i{display:block;height:100%;background:var(--g2);border-radius:9px;transition:width .8s}
+.gc{background:var(--g2);color:#fff;border:0}.gc .bar{background:rgba(255,255,255,.3)}.gc .bar i{background:#fff}.gc .mut{color:#fff;opacity:.92}
+.tabs{display:flex;gap:6px;background:var(--bd);padding:4px;border-radius:14px;margin-bottom:12px}
+.tabs button{flex:1;border:0;background:transparent;min-height:40px}.tabs .on{background:var(--pu);color:#fff;font-weight:800}
+.chart{display:flex;align-items:flex-end;gap:8px;height:170px}.chart div{flex:1;text-align:center;font-size:12px;display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+.chart i{display:block;background:var(--g2);border-radius:8px 8px 0 0;min-height:3px;transition:height .8s cubic-bezier(.2,.8,.2,1)}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center;font-size:13px}.days b{display:grid;place-items:center;width:100%;aspect-ratio:1;max-width:44px;margin:2px auto 0;border-radius:50%;border:2px solid var(--bd)}
+.days .ok b{background:var(--g3);border:0;color:#fff;animation:pp .5s}
+@keyframes pp{50%{transform:scale(1.25)}}
+.drops{display:flex;gap:6px;flex-wrap:wrap;font-size:26px;margin:8px 0}.drops span{opacity:.25;filter:grayscale(1)}.drops .f{opacity:1;filter:none;animation:dr .6s}
+@keyframes dr{from{transform:translateY(-14px) scale(.6)}}
+.tm{font-size:54px;font-weight:800;text-align:center;font-variant-numeric:tabular-nums;letter-spacing:1px}
+.item{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--bd)}.item:last-child{border:0}.item .ic{font-size:26px}
+.badge{text-align:center;padding:12px 6px;border-radius:16px;border:1px solid var(--bd);background:var(--card);font-size:13px}
+.badge .ic{font-size:34px;display:block}.badge.lock{opacity:.4;filter:grayscale(1)}.badge.new{animation:pp .8s}.badge:not(.lock){border-color:var(--pu);box-shadow:0 0 0 2px rgba(124,58,237,.2)}
+.empty{text-align:center;padding:26px 12px}.empty .ic{font-size:44px}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--bd);display:flex;justify-content:center;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));z-index:5}
+nav button{flex:1;max-width:130px;border:0;background:none;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:0;color:var(--mut)}nav button span{font-size:22px}nav .on{color:var(--pu);font-weight:800}
+#m{position:fixed;inset:0;background:rgba(17,24,39,.7);display:none;align-items:flex-end;justify-content:center;z-index:9}
+#m.s{display:flex}#m>div{background:var(--card);width:100%;max-width:520px;max-height:92vh;overflow:auto;border-radius:24px 24px 0 0;padding:20px;animation:up .25s}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+label{display:block;font-size:14px;font-weight:600;margin:10px 0 4px}
+input,select,textarea{width:100%;font:inherit;min-height:44px;padding:8px 12px;border-radius:12px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)}
+.err{color:#DC2626;font-size:14px;margin-top:8px}:root[data-th="dark"] .err{color:#FCA5A5}
+#pop{position:fixed;inset:0;display:none;place-items:center;z-index:12;pointer-events:none}#pop.s{display:grid}
+#pop div{background:var(--g1);color:#fff;border-radius:24px;padding:24px 34px;text-align:center;font-weight:800;box-shadow:0 20px 50px rgba(0,0,0,.4);animation:bn .5s}
+#pop .e{font-size:48px;display:block}@keyframes bn{from{transform:scale(.5);opacity:0}}
+#mo{transition:opacity .4s}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><defs>
+<linearGradient id="a1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7C3AED"/><stop offset="1" stop-color="#06B6D4"/></linearGradient>
+<linearGradient id="a2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#EA580C"/><stop offset="1" stop-color="#F97316"/></linearGradient>
+<linearGradient id="a3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7C3AED"/><stop offset="1" stop-color="#F97316"/></linearGradient>
+<linearGradient id="a4" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#06B6D4"/><stop offset="1" stop-color="#7C3AED"/></linearGradient>
+</defs></svg>
+<main id="v"></main>
+<nav aria-label="Main"></nav>
+<div id="m" role="dialog" aria-modal="true"></div>
+<div id="pop" role="status"></div>
+<script>
+/* ---------- STORAGE (localStorage; SQLite is not available in a browser page) ---------- */
+const $=s=>document.querySelector(s),K='pulse_v1';
+const def={name:'Athlete',acts:[],water:{},wg:8,goals:[],xp:0,done:{},ach:{},gc:0,maxStreak:0,theme:'light',notif:true,rec:{}};
+let S;try{S=Object.assign({},def,JSON.parse(localStorage.getItem(K)||'{}'))}catch(e){S={...def}}
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+/* ---------- CONSTANTS & HELPERS ---------- */
+const T={steps:['Steps','👟'],walk:['Walking','🚶'],run:['Running','🏃'],cycle:['Cycling','🚴'],gym:['Gym workout','🏋️'],strength:['Strength training','💪'],yoga:['Yoga','🧘'],swim:['Swimming','🏊'],other:['Other exercise','⚡']};
+const R={steps:[0,0],walk:[4.5,.08],run:[10,.16],cycle:[8,.3],gym:[6,0],strength:[5,0],yoga:[3,0],swim:[8,.04],other:[5,0]};
+const M={steps:['Steps','👟','steps','a1',10000],kcal:['Calories','🔥','kcal','a2',600],min:['Workout','⏱','min','a3',45],dist:['Distance','📍','km','a1',5],water:['Water','💧','glasses','a4',8]};
+const QUOTES=['Small steps every day.','Consistency beats intensity.','Progress, not perfection.','Show up today, thank yourself later.'];
+const pad=n=>String(n).padStart(2,'0');
+const dk=(d=new Date())=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const addD=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const mon=()=>{const d=new Date();d.setDate(d.getDate()-((d.getDay()+6)%7));return d};
+const wkDays=(m=mon())=>[0,1,2,3,4,5,6].map(i=>dk(addD(m,i)));
+const wk=()=>dk(mon());
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nf=n=>Math.round(n).toLocaleString();
+const hm=m=>m>=60?Math.floor(m/60)+'h '+pad(Math.round(m%60))+'m':Math.round(m)+' min';
+/* ---------- PROGRESS CALCULATIONS ---------- */
+function day(k){const o={steps:0,kcal:0,min:0,dist:0,water:S.water[k]||0};S.acts.filter(a=>a.d==k).forEach(a=>{o.steps+=a.st||0;o.kcal+=a.kc;o.min+=a.du;o.dist+=a.di});return o}
+const dTarget=k=>{const g=S.goals.find(g=>g.k==k&&g.p=='day');return g?g.t:k=='water'?S.wg:M[k][4]};
+const workouts=()=>S.acts.filter(a=>a.t!='steps');
+function streakCur(){const set=new Set(S.acts.map(a=>a.d));let d=new Date();if(!set.has(dk(d)))d=addD(d,-1);let n=0;while(set.has(dk(d))){n++;d=addD(d,-1)}return n}
+function gp(g){const v=g.p=='day'?day(dk())[g.k]:wkDays().reduce((s,k)=>s+day(k)[g.k],0);return{v,pc:Math.min(100,v/g.t*100)}}
+const gl=g=>M[g.k][1]+' '+nf(g.t)+' '+M[g.k][2]+'/'+(g.p=='day'?'day':'week');
+const lvl=()=>({l:Math.floor(S.xp/300)+1,x:S.xp%300});
+const ACH=[
+{id:'first',i:'🏆',n:'First Workout',d:'Complete your first workout.',f:()=>workouts().length>=1},
+{id:'str7',i:'🔥',n:'7-Day Streak',d:'Stay active for 7 consecutive days.',f:()=>S.maxStreak>=7},
+{id:'10k',i:'👟',n:'10K Club',d:'Reach 10,000 steps in one day.',f:()=>[...new Set(S.acts.map(a=>a.d))].some(k=>day(k).steps>=10000)},
+{id:'war',i:'💪',n:'Workout Warrior',d:'Complete 25 workouts.',f:()=>workouts().length>=25},
+{id:'run',i:'🏃',n:'Distance Runner',d:'Run 50 km total.',f:()=>S.acts.filter(a=>a.t=='run').reduce((s,a)=>s+a.di,0)>=50},
+{id:'crush',i:'💯',n:'Goal Crusher',d:'Complete 10 fitness goals.',f:()=>S.gc>=10}];
+/* ---------- XP / GOAL / ACHIEVEMENT SYSTEM ---------- */
+let pops=[];
+function pop(e,t,s){pops.push([e,t,s]);if(pops.length==1)nextPop()}
+function nextPop(){const p=pops[0];if(!p)return;const el=$('#pop');el.innerHTML=`<div><span class="e">${p[0]}</span>${p[1]}<br><span style="font-weight:600">${p[2]||''}</span></div>`;el.className='s';setTimeout(()=>{el.className='';pops.shift();setTimeout(nextPop,200)},1900)}
+function check(){
+S.maxStreak=Math.max(S.maxStreak,streakCur());
+S.goals.forEach(g=>{if(gp(g).v>=g.t){const key=g.id+'|'+(g.p=='day'?dk():wk());if(!S.done[key]){S.done[key]=1;S.gc++;const x=g.p=='day'?50:100;S.xp+=x;pop('🎉','Goal Complete!',gl(g)+' · +'+x+' XP')}}});
+ACH.forEach(a=>{if(!S.ach[a.id]&&a.f()){S.ach[a.id]=Date.now();pop(a.i,'Achievement unlocked',a.n)}});
+save()}
+/* ---------- NAVIGATION / RENDER ---------- */
+let tab='home',pm='steps',qi=0;
+const TABS=[['home','🏠','Home'],['work','🏋️','Workouts'],['prog','📊','Progress'],['goals','🎯','Goals'],['prof','👤','Profile']];
+$('nav').innerHTML=TABS.map(t=>`<button data-t="${t[0]}" onclick="go('${t[0]}')" aria-label="${t[2]}"><span>${t[1]}</span>${t[2]}</button>`).join('');
+function go(t){tab=t;render();scrollTo(0,0)}
+function render(){document.documentElement.dataset.th=S.theme;$('#v').innerHTML=V[tab]();document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t==tab))}
+/* ---------- UI COMPONENTS ---------- */
+function ring(pc,size,sw,g,inner){const r=(size-sw)/2,c=2*Math.PI*r,o=c*(1-Math.min(100,pc)/100);
+return`<div class="ringw" style="width:${size}px;height:${size}px"><svg class="ring" width="${size}" height="${size}"><circle class="bg" cx="${size/2}" cy="${size/2}" r="${r}" stroke-width="${sw}"/><circle class="fg" cx="${size/2}" cy="${size/2}" r="${r}" stroke-width="${sw}" stroke="url(#${g})" style="--c:${c};--o:${o}"/></svg><div class="in">${inner}</div></div>`}
+const bar=p=>`<div class="bar"><i style="width:${p}%"></i></div>`;
+const emptyAct=`<div class="card empty"><div class="ic">🏃</div><h3>No activities yet.</h3><p class="mut">Start moving and your progress will appear here.</p><button class="pri" onclick="actForm()">+ Log Activity</button></div>`;
+function modal(h){$('#m').innerHTML='<div>'+h+'</div>';$('#m').className='s'}
+function closeM(){$('#m').className=''}
+$('#m').addEventListener('click',e=>{if(e.target.id=='m')closeM()});
+/* ---------- VIEWS ---------- */
+const V={};
+V.home=()=>{const k=dk(),d=day(k),h=new Date().getHours(),gr=h<12?'Morning':h<17?'Afternoon':'Evening',L=lvl(),st=streakCur();
+const ks=['steps','kcal','min','water'],pcs=ks.map(x=>Math.min(100,d[x]/dTarget(x)*100)),tot=Math.round(pcs.reduce((a,b)=>a+b,0)/4);
+const days=wkDays(),set=new Set(S.acts.map(a=>a.d)),names=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const today=S.acts.filter(a=>a.d==k);
+return`<div class="card hd"><div class="row sp"><div><h1>Good ${gr} 👋</h1><p>Ready to move today?</p></div><div style="text-align:right"><b style="font-size:22px">Lv ${L.l}</b><br>${st?'🔥 '+st:''}</div></div></div>
+<div class="card"><h3>Today's progress</h3><div class="row" style="flex-wrap:wrap;justify-content:center;gap:20px">
+${ring(tot,150,14,'a3',`<b style="font-size:30px">${tot}%</b><br><span class="mut">complete</span>`)}
+<div class="grid" style="flex:1;min-width:220px;grid-template-columns:1fr 1fr">${ks.map((x,i)=>`<div class="tile">${ring(pcs[i],74,8,M[x][3],`<span style="font-size:20px">${M[x][1]}</span>`)}<b>${nf(d[x])}${x=='water'?' / '+dTarget('water'):''}</b><span class="mut">${x=='steps'?'steps':x=='kcal'?'kcal':x=='min'?'min':'glasses'}</span></div>`).join('')}</div></div></div>
+<button class="pri" onclick="actForm()">+ Log Activity</button>
+<h2>Quick log</h2><div class="q">${['run','cycle','gym','yoga','walk','swim'].map(t=>`<button onclick="actForm('${t}')"><span>${T[t][1]}</span>${T[t][0].split(' ')[0]}</button>`).join('')}</div>
+<div class="card" style="margin-top:14px;cursor:pointer" onclick="qi++;render()" title="Tap for another message"><b>${QUOTES[qi%QUOTES.length]}</b></div>
+<div class="card"><div class="row sp"><h3>${st?'🔥 '+st+' day streak':'Start a streak today'}</h3></div><div class="days">${days.map((x,i)=>`<div class="${set.has(x)?'ok':''}">${names[i]}<b>${set.has(x)?'✓':'○'}</b></div>`).join('')}</div>
+<p class="mut" style="margin-bottom:0">${st==6?"You're one day away from a 7-day streak!":st?'Log something each day to keep it going.':'Log any activity to begin.'}</p></div>
+<div class="card"><div class="row sp"><h3>Level ${L.l}</h3><span class="mut">${L.x} / 300 XP</span></div>${bar(L.x/3)}</div>
+<div class="card"><div class="row sp"><h3>💧 Hydration</h3><button class="sm" onclick="waterGoal()">Goal: ${S.wg}</button></div>
+<div class="drops">${Array.from({length:Math.max(S.wg,d.water)},(_,i)=>`<span class="${i<d.water?'f':''}">💧</span>`).join('')}</div>
+<div class="row sp"><b>${d.water} / ${S.wg} glasses</b><span class="row"><button class="sm" onclick="addW(-1)" aria-label="Remove glass">−</button><button class="sm pri" style="width:auto;min-height:36px;font-size:15px;box-shadow:none" onclick="addW(1)">+ Add Glass</button></span></div></div>
+<div class="card"><h3>🔥 Calories</h3><div class="row sp"><b>${nf(d.kcal)} / ${nf(dTarget('kcal'))} kcal</b></div>${bar(Math.min(100,d.kcal/dTarget('kcal')*100))}
+${today.filter(a=>a.kc).map(a=>`<div class="row sp mut" style="margin-top:6px"><span>${T[a.t][1]} ${T[a.t][0]}</span><span>${a.kc} kcal</span></div>`).join('')||'<p class="mut" style="margin-bottom:0">Calories from today\'s activities show up here.</p>'}</div>`};
+/* Workout tracker + history */
+let W={t:'run',st:'idle',acc:0,ts:0};
+const el=()=>W.acc+(W.st=='run'?Date.now()-W.ts:0);
+const wStats=()=>{const m=el()/60000;return{m,kc:Math.round(m*R[W.t][0]),di:+(m*R[W.t][1]).toFixed(2)}};
+const clock=ms=>{const s=Math.floor(ms/1000);return pad(Math.floor(s/3600))+':'+pad(Math.floor(s%3600/60))+':'+pad(s%60)};
+V.work=()=>{let c;const s=wStats();
+if(W.st=='idle')c=`<h3>Start a workout</h3><label for="wt">Activity</label><select id="wt" onchange="W.t=this.value">${Object.keys(T).filter(x=>x!='steps').map(x=>`<option value="${x}" ${x==W.t?'selected':''}>${T[x][1]} ${T[x][0]}</option>`).join('')}</select><br><button class="pri" onclick="wAct('start')">▶ Start Workout</button>`;
+else if(W.st=='done')c=`<h3 style="text-align:center">🎉 WORKOUT COMPLETE</h3><div class="grid tile"><div><b>${Math.max(1,Math.round(s.m))} min</b><span class="mut">Duration</span></div><div><b>${s.kc} kcal</b><span class="mut">Calories</span></div><div><b>${s.di} km</b><span class="mut">Distance</span></div></div><br><div class="row"><button style="flex:1" onclick="wAct('discard')">Discard</button><button class="pri" style="flex:2" onclick="wAct('save')">Save Workout</button></div>`;
+else c=`<p class="mut" style="text-align:center;margin:0">${W.st=='run'?'WORKOUT IN PROGRESS':'PAUSED'} · ${T[W.t][0]}</p><div class="tm" id="tm">${clock(el())}</div><div class="grid tile"><div><b id="tk">${s.kc} kcal</b><span class="mut">Calories</span></div><div><b id="td">${s.di} km</b><span class="mut">Distance</span></div></div><br><div class="row"><button style="flex:1" onclick="wAct('${W.st=='run'?'pause':'resume'}')">${W.st=='run'?'Pause':'Resume'}</button><button class="pri" style="flex:1" onclick="wAct('finish')">Finish</button></div>`;
+const sorted=[...S.acts].sort((a,b)=>(b.d+b.tm).localeCompare(a.d+a.tm)),groups={};sorted.forEach(a=>(groups[a.d]=groups[a.d]||[]).push(a));
+const lab=k=>k==dk()?'TODAY':k==dk(addD(new Date(),-1))?'YESTERDAY':new Date(k+'T00:00').toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'});
+return`<h2 style="margin-top:6px">Workouts</h2><div class="card">${c}</div><h2>Activity history</h2>`+(sorted.length?Object.keys(groups).map(k=>`<div class="card"><b class="mut">${lab(k)}</b>${groups[k].map(a=>`<div class="item"><span class="ic">${T[a.t][1]}</span><div style="flex:1"><b>${T[a.t][0]}</b><div class="mut">${a.st&&!a.du?nf(a.st)+' steps':a.du+' min'} · ${a.kc} kcal<br>${a.tm}</div></div><button class="sm" onclick="view('${a.id}')" aria-label="Details">👁</button><button class="sm" onclick="actForm('','${a.id}')" aria-label="Edit">✎</button><button class="sm" onclick="delAsk('${a.id}')" aria-label="Delete">🗑</button></div>`).join('')}</div>`).join(''):emptyAct)};
+function wAct(a){const n=Date.now();
+if(a=='start'){W={t:W.t,st:'run',acc:0,ts:n}}
+else if(a=='pause'){W.acc=el();W.st='pause'}
+else if(a=='resume'){W.ts=n;W.st='run'}
+else if(a=='finish'){W.acc=el();W.st='done'}
+else if(a=='discard'){W={t:W.t,st:'idle',acc:0,ts:0}}
+else if(a=='save'){const s=wStats(),now=new Date();addAct({t:W.t,du:Math.max(1,Math.round(s.m)),kc:s.kc,di:s.di,st:0,d:dk(),tm:pad(now.getHours())+':'+pad(now.getMinutes()),n:'Timed workout'});W={t:W.t,st:'idle',acc:0,ts:0}}
+render()}
+setInterval(()=>{if(W.st=='run'&&tab=='work'&&$('#tm')){const s=wStats();$('#tm').textContent=clock(el());$('#tk').textContent=s.kc+' kcal';$('#td').textContent=s.di+' km'}},500);
+/* Activity form, validation, CRUD */
+function actForm(t,id){const a=id?S.acts.find(x=>x.id==id):null,now=new Date(),ty=a?a.t:t||'run';
+modal(`<h3>${a?'Edit activity':(T[ty][1]+' Log activity')}</h3>
+<label for="ft">Activity type</label><select id="ft">${Object.keys(T).map(x=>`<option value="${x}" ${x==ty?'selected':''}>${T[x][1]} ${T[x][0]}</option>`).join('')}</select>
+<div class="grid"><div><label for="fdu">Duration (min)</label><input id="fdu" type="number" min="0" inputmode="decimal" value="${a?a.du:''}"></div><div><label for="fdi">Distance (km)</label><input id="fdi" type="number" min="0" step="0.01" inputmode="decimal" value="${a?a.di:''}"></div>
+<div><label for="fkc">Calories (kcal)</label><input id="fkc" type="number" min="0" inputmode="decimal" placeholder="auto" value="${a?a.kc:''}"></div><div><label for="fst">Steps</label><input id="fst" type="number" min="0" inputmode="numeric" value="${a&&a.st?a.st:''}"></div>
+<div><label for="fd">Date</label><input id="fd" type="date" value="${a?a.d:dk()}"></div><div><label for="ftm">Time</label><input id="ftm" type="time" value="${a?a.tm:pad(now.getHours())+':'+pad(now.getMinutes())}"></div></div>
+<label for="fn">Notes</label><textarea id="fn" rows="2">${a?esc(a.n):''}</textarea><div class="err" id="fe" role="alert"></div><br>
+<div class="row"><button style="flex:1" onclick="closeM()">Cancel</button><button class="pri" style="flex:2" onclick="sf('${id||''}')">Save Activity</button></div>`)}
+function sf(id){const g=x=>$('#f'+x).value.trim(),e=[];
+const num=(v,l)=>{if(v==='')return 0;const x=+v;if(isNaN(x)||x<0){e.push(l+' must be a number that is 0 or more.');return 0}return x};
+const t=g('t'),du=num(g('du'),'Duration'),di=num(g('di'),'Distance'),k0=num(g('kc'),'Calories'),st=Math.round(num(g('st'),'Steps')),d=g('d'),tm=g('tm');
+if(!d||!tm)e.push('Date and time are required.');
+if(!e.length&&du<=0&&st<=0)e.push('Enter a duration or a step count.');
+if(e.length){$('#fe').innerHTML=e.map(esc).join('<br>');return}
+const kc=g('kc')===''?Math.round(du*R[t][0]):Math.round(k0);
+const o={t,du,kc,di,st,d,tm,n:g('n')};
+if(id){Object.assign(S.acts.find(x=>x.id==id),o);save();closeM();check();render();pop('✓','Activity Updated','')}else{closeM();addAct(o);render()}}
+function addAct(o){const had=S.acts.some(a=>a.d==o.d);o.id='a'+Date.now()+Math.floor(Math.random()*99);S.acts.push(o);let xp=20;
+if(!had&&o.d==dk()&&streakCur()>=2)xp+=25;
+S.xp+=xp;save();check();
+if(!pops.length)pop('✓','Activity Added','+'+o.kc+' kcal · +'+xp+' XP');else pops.push(['✓','Activity Added','+'+o.kc+' kcal'])}
+function view(id){const a=S.acts.find(x=>x.id==id);modal(`<h3>${T[a.t][1]} ${T[a.t][0]}</h3><div class="item"><b>Date</b><span>${a.d} ${a.tm}</span></div><div class="item"><b>Duration</b><span>${a.du} min</span></div><div class="item"><b>Calories</b><span>${a.kc} kcal</span></div><div class="item"><b>Distance</b><span>${a.di} km</span></div><div class="item"><b>Steps</b><span>${nf(a.st||0)}</span></div><div class="item"><b>Notes</b><span>${esc(a.n)||'—'}</span></div><br><button style="width:100%" onclick="closeM()">Close</button>`)}
+function delAsk(id){modal(`<h3>Are you sure you want to delete this activity?</h3><p class="mut">This cannot be undone.</p><div class="row"><button style="flex:1" onclick="closeM()">Cancel</button><button class="dng" style="flex:1" onclick="delAct('${id}')">Delete</button></div>`)}
+function delAct(id){S.acts=S.acts.filter(a=>a.id!=id);save();closeM();render()}
+function addW(n){const k=dk();S.water[k]=Math.max(0,(S.water[k]||0)+n);save();check();render()}
+function waterGoal(){modal(`<h3>Daily water goal</h3><label for="wg">Glasses per day</label><input id="wg" type="number" min="1" max="30" value="${S.wg}"><div class="err" id="fe"></div><br><div class="row"><button style="flex:1" onclick="closeM()">Cancel</button><button class="pri" style="flex:2" onclick="setWG()">Save goal</button></div>`)}
+function setWG(){const v=+$('#wg').value;if(!Number.isInteger(v)||v<1||v>30){$('#fe').textContent='Enter a whole number from 1 to 30.';return}S.wg=v;save();closeM();check();render()}
+/* Progress: weekly chart, insights, records */
+V.prog=()=>{const days=wkDays(),vals=days.map(k=>day(k)[pm==='time'?'min':pm]),mx=Math.max(...vals,1),nm=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const lastDays=wkDays(addD(mon(),-7)),sum=ds=>ds.reduce((s,k)=>s+day(k).kcal+day(k).min,0),a=sum(days),b=sum(lastDays);
+const ins=[];
+if(S.acts.length){if(b>0)ins.push(['📈',a>=b?`You were ${Math.round((a-b)/b*100)}% more active this week.`:`You were ${Math.round((b-a)/b*100)}% less active than last week.`]);
+const kc=days.map(k=>day(k).kcal),bi=kc.indexOf(Math.max(...kc));if(kc[bi]>0)ins.push(['🔥',`Your most active day was ${['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'][bi]}.`]);
+const cnt={};workouts().forEach(x=>cnt[x.t]=(cnt[x.t]||0)+1);const top=Object.keys(cnt).sort((x,y)=>cnt[y]-cnt[x])[0];if(top)ins.push(['🏃',`${T[top][0]} was your most frequent activity.`]);
+const dg=S.goals.filter(g=>g.p=='day');if(dg.length)ins.push(['🎯',`You completed ${days.reduce((s,k)=>s+dg.filter(g=>S.done[g.id+'|'+k]).length,0)} daily goal${days.reduce((s,k)=>s+dg.filter(g=>S.done[g.id+'|'+k]).length,0)==1?'':'s'} this week.`])}
+const runs=S.acts.filter(a=>a.t=='run'),mxv=(arr,f)=>arr.length?Math.max(...arr.map(f)):0,allD=[...new Set(S.acts.map(a=>a.d))];
+const rec=[['🏃','Longest Run',mxv(runs,a=>a.di)?mxv(runs,a=>a.di)+' km':'—'],['⏱','Longest Workout',mxv(workouts(),a=>a.du)?hm(mxv(workouts(),a=>a.du)):'—'],['🔥','Highest Calories',mxv(S.acts,a=>a.kc)?mxv(S.acts,a=>a.kc)+' kcal':'—'],['👟','Most Steps',mxv(allD,k=>day(k).steps)?nf(mxv(allD,k=>day(k).steps)):'—']];
+const lbl={steps:'Steps',kcal:'Calories',time:'Time',dist:'Distance'},un={steps:'',kcal:' kcal',time:' min',dist:' km'};
+return`<h2 style="margin-top:6px">Weekly activity</h2><div class="card"><div class="tabs" role="tablist">${Object.keys(lbl).map(x=>`<button class="${pm==x?'on':''}" onclick="pm='${x}';render()">${lbl[x]}</button>`).join('')}</div>
+<div class="chart">${vals.map((v,i)=>`<div><span class="mut">${v?(pm=='dist'?v.toFixed(1):nf(v)):''}</span><i style="height:${v/mx*130}px"></i>${nm[i]}</div>`).join('')}</div></div>
+<h2>Weekly insights</h2><div class="card">${ins.length?ins.map(i=>`<div class="item"><span class="ic">${i[0]}</span>${esc(i[1])}</div>`).join(''):'<p class="mut" style="margin:0">Log a few activities and insights based on your data will show up here.</p>'}</div>
+<h2>Personal records</h2><div class="grid">${rec.map(r=>`<div class="card tile" style="margin:0"><span style="font-size:26px">${r[0]}</span><b>${r[2]}</b><span class="mut">${r[1]}</span></div>`).join('')}</div>`};
+/* Goals */
+V.goals=()=>`<div class="row sp"><h2>Goals</h2><button class="sm" onclick="goalForm()">+ New goal</button></div>`+(S.goals.length?S.goals.map(g=>{const p=gp(g),ok=p.v>=g.t;return`<div class="card gc"><div class="row sp"><b>${gl(g)}</b><button class="sm" style="background:rgba(255,255,255,.2);color:#fff;border:0" onclick="delGoal('${g.id}')" aria-label="Delete goal">🗑</button></div><div style="margin:10px 0 6px">${bar(p.pc)}</div><div class="row sp"><span>${nf(p.v)} / ${nf(g.t)}</span><b>${ok?'🎉 Completed':Math.round(p.pc)+'%'}</b></div></div>`}).join(''):`<div class="card empty"><div class="ic">🎯</div><h3>Set your first fitness goal.</h3><p class="mut">Goals earn XP when you complete them.</p><button class="pri" onclick="goalForm()">+ Create Goal</button></div>`);
+function goalForm(){modal(`<h3>New goal</h3><label for="gk">What to track</label><select id="gk">${Object.keys(M).map(k=>`<option value="${k}">${M[k][1]} ${M[k][0]} (${M[k][2]})</option>`).join('')}</select><label for="gt">Target</label><input id="gt" type="number" min="1" inputmode="decimal"><label for="gpd">Period</label><select id="gpd"><option value="day">Per day</option><option value="week">Per week</option></select><div class="err" id="fe"></div><br><div class="row"><button style="flex:1" onclick="closeM()">Cancel</button><button class="pri" style="flex:2" onclick="addGoal()">Create goal</button></div>`)}
+function addGoal(){const t=+$('#gt').value;if(!t||t<=0){$('#fe').textContent='Enter a target greater than 0.';return}S.goals.push({id:'g'+Date.now(),k:$('#gk').value,t,p:$('#gpd').value});save();closeM();check();render()}
+function delGoal(id){S.goals=S.goals.filter(g=>g.id!=id);save();render()}
+/* Profile */
+V.prof=()=>{const L=lvl(),A=S.acts,tot=A.reduce((o,a)=>({s:o.s+(a.st||0),d:o.d+a.di,m:o.m+a.du,k:o.k+a.kc}),{s:0,d:0,m:0,k:0}),n=Object.keys(S.ach).length;
+return`<h2 style="margin-top:6px">Profile</h2><div class="card hd"><label for="pn" style="margin:0">Profile name</label><input id="pn" value="${esc(S.name)}" maxlength="30" onchange="setName(this.value)" style="background:rgba(255,255,255,.95);color:#111827"><p>Level ${L.l} · ${S.xp} XP total</p></div>
+<div class="grid">${[['🔥','Current streak',streakCur()+' days'],['🏆','Achievements',n+' / '+ACH.length],['👟','Total steps',nf(tot.s)],['🏃','Total distance',tot.d.toFixed(1)+' km'],['⏱','Workout time',hm(tot.m)],['🔥','Calories burned',nf(tot.k)+' kcal']].map(r=>`<div class="card tile" style="margin:0"><span style="font-size:24px">${r[0]}</span><b>${r[2]}</b><span class="mut">${r[1]}</span></div>`).join('')}</div>
+<h2>Achievements</h2><div class="grid">${ACH.map(a=>`<div class="badge ${S.ach[a.id]?'':'lock'}"><span class="ic">${a.i}</span><b>${a.n}</b><br><span class="mut">${a.d}</span></div>`).join('')}</div>
+<h2>Settings</h2><div class="card"><div class="item"><b style="flex:1">Theme</b><button class="sm" onclick="S.theme='light';save();render()" aria-pressed="${S.theme=='light'}">☀️ Light</button><button class="sm" onclick="S.theme='dark';save();render()" aria-pressed="${S.theme=='dark'}">🌙 Dark</button></div>
+<div class="item"><b style="flex:1">Daily reminders</b><button class="sm" onclick="S.notif=!S.notif;save();render()" aria-pressed="${S.notif}">${S.notif?'On':'Off'}</button></div>
+<div class="item"><b style="flex:1">Reset progress</b><button class="sm dng" onclick="resetAsk()">Reset</button></div>
+<div class="item"><span class="mut">Pulse 1.0 · Your data is saved in this browser only.</span></div></div>`};
+function setName(v){S.name=v.trim()||'Athlete';save()}
+function resetAsk(){modal(`<h3>Reset all progress?</h3><p class="mut">This deletes every activity, goal, XP and achievement on this device.</p><div class="row"><button style="flex:1" onclick="closeM()">Cancel</button><button class="dng" style="flex:1" onclick="resetAll()">Reset</button></div>`)}
+function resetAll(){const t=S.theme;S={...def,theme:t,acts:[],water:{},goals:[],done:{},ach:{}};save();closeM();render()}
+render();
+</script>
+</body>
+</html>
